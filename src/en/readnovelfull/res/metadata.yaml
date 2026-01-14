@@ -1,9 +1,0 @@
-$schema: "https://raw.githubusercontent.com/soulcourt/eikyusho-extensions/refs/heads/main/.template/metadata.schema.yaml"
-extension:
-  slug: "en.readnovelfull"
-  name: "Read Novel Full"
-  icon: "icon.png"
-  version_code: 1
-  version_name: "0.1.0"
-  language: "en"
-  description: ""
