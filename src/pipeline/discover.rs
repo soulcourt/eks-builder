@@ -17,7 +17,6 @@ pub fn process_languages(
             util::exit(
                 1,
                 "Only directories are allowed in the extensions source directory",
-                true,
             );
         }
 

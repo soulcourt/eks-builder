@@ -2,16 +2,12 @@ use std::{env, fs, io};
 use std::path::{Path, PathBuf};
 use toml::Value;
 use crate::lock::reader;
+use crate::util;
 
-pub(crate) fn project_root() -> PathBuf {
+pub fn project_root() -> PathBuf {
     env::current_dir()
-        .unwrap()
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| {
-            log::warn!("Failed to find project root.");
-            std::process::exit(1);
+        .unwrap_or_else(|_| {
+            util::exit(1, "Failed to find project root.");
         })
 }
 
@@ -34,10 +30,6 @@ pub(crate) fn crate_name(extension_path: &Path) -> Option<String> {
     Some(name.replace('-', "_"))
 }
 
-// pub(crate) fn extension_name(path: &Path) -> Option<String> {
-//
-// }
-
 pub(crate) fn get_slug_by_id(id: &str) -> Option<String> {
     let project_root = project_root();
 
@@ -47,14 +39,13 @@ pub(crate) fn get_slug_by_id(id: &str) -> Option<String> {
         return None;
     };
 
-    lock.iter()
-        .find_map(|(slug, entry)| {
-            if entry.get("id").map(|s| s == id).unwrap_or(false) {
-                Some(slug.clone())
-            } else {
-                None
-            }
-        })
+    lock.iter().find_map(|(slug, entry)| {
+        entry
+            .get("id")
+            .map(|s| s.as_str() == id)
+            .unwrap_or(false)
+            .then(|| slug.clone())
+    })
 }
 
 pub(crate) fn copy_dir_recursive(src: &Path, dst: &Path) -> io::Result<()> {
