@@ -4,7 +4,7 @@ use toml::Value;
 use crate::lock::reader;
 use crate::util;
 
-pub fn project_root() -> PathBuf {
+pub(crate) fn project_root() -> PathBuf {
     env::current_dir()
         .unwrap_or_else(|_| {
             util::exit(1, "Failed to find project root.");

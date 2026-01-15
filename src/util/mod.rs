@@ -1,5 +1,5 @@
 pub(crate) mod constants;
-pub mod io;
+pub(crate) mod io;
 pub(crate) mod typealias;
 
 use uuid::Uuid;
@@ -18,12 +18,12 @@ where
 	})
 }
 
-	pub fn exit(code: i32, msg: &str) -> ! {
-		if code == 0 {
-			log::info!("{}", msg);
-		} else {
-			log::error!("{}", msg);
-		}
-
-		std::process::exit(code);
+pub fn exit(code: i32, msg: &str) -> ! {
+	if code == 0 {
+		log::info!("{}", msg);
+	} else {
+		log::error!("{}", msg);
 	}
+
+	std::process::exit(code);
+}
