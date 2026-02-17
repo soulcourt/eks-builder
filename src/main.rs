@@ -1,3 +1,6 @@
+#[cfg(target_arch = "wasm32")]
+compile_error!("eks-builder is a native-only tool");
+
 use clap::{Parser};
 use eks_builder::{cli, cli::{Commands}, util};
 
