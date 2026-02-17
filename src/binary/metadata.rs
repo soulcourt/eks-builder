@@ -11,8 +11,9 @@ pub struct ExtensionMetadata {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ExtensionInfo {
-	pub slug: String,
 	pub name: String,
+	pub slug: String,
+	pub base_url: String,
 	pub version_code: u32,
 	pub version_name: String,
 	pub language: String,

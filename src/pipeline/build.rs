@@ -25,21 +25,20 @@ pub(crate) fn should_build(
 }
 
 pub(crate) fn build_extension(extension_path: &PathBuf) -> bool {
+    let manifest = extension_path.join("Cargo.toml");
+    let target_dir = extension_path.join("target");
+
     let status = Command::new("cargo")
         .arg("+nightly")
         .arg("build")
         .arg("--release")
         .arg("--target")
         .arg("wasm32-unknown-unknown")
-        .current_dir(extension_path)
+        .arg("--manifest-path")
+        .arg(&manifest)
+        .env("CARGO_TARGET_DIR", &target_dir)
         .status()
         .expect("Failed to run cargo build");
 
-    if status.success() {
-        log::debug!("Built {:?}", extension_path);
-        true
-    } else {
-        log::error!("Build failed for {:?}", extension_path);
-        false
-    }
+    status.success()
 }

@@ -1,6 +1,6 @@
 use crate::util;
 use crate::util::constants;
-use image::{imageops::FilterType, DynamicImage};
+use image::{imageops::FilterType, DynamicImage, ImageFormat};
 use log;
 use std::path::{Path, PathBuf};
 use std::{fs, io};
@@ -94,7 +94,7 @@ pub(crate) fn create_extension_icon(
 }
 
 fn find_icon(extension_path: &Path, id: &str) -> Option<PathBuf> {
-	let extensions = ["png", "webp", "svg", "jpg"];
+	let extensions = ["png", "webp", "jpg"];
 	let res_dir = extension_path.join("res");
 
 	let icon_path = extensions
@@ -109,17 +109,19 @@ fn find_icon(extension_path: &Path, id: &str) -> Option<PathBuf> {
 	icon_path
 }
 
-fn copy_icon_for_server(icon_src: &Path, project_root: &Path, id: &str) -> io::Result<u64> {
-	let icon_dst = project_root.join("extensions").join(id).join(
-		icon_src
-			.file_name()
-			.unwrap()
-			.to_str()
-			.unwrap()
-			.replace("icon", "preview"),
-	);
+fn copy_icon_for_server(icon_src: &Path, project_root: &Path, id: &str) -> io::Result<()> {
+	let icon_dst = project_root
+		.join("extensions")
+		.join(id)
+		.join("preview.png");
 
-	fs::copy(icon_src, &icon_dst)
+	let img = image::open(icon_src)
+		.map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Failed to open image: {e}")))?;
+
+	img.save_with_format(icon_dst, ImageFormat::Png)
+		.map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Failed to save image: {e}")))?;
+
+	Ok(())
 }
 
 fn generate_density_icons(icon_src: &Path, payload_dir: &Path, ext_slug: &str) -> io::Result<()> {
